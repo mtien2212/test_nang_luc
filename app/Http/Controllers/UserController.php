@@ -22,11 +22,24 @@ class UserController extends Controller
     // Xử lý đăng ký
     public function register(Request $request)
     {
+        $messages = [
+            'name.required' => 'Vui lòng nhập tên.',
+            'name.string' => 'Tên phải là một chuỗi ký tự.',
+            'name.max' => 'Tên không được vượt quá 255 ký tự.',
+            'email.required' => 'Vui lòng nhập email.',
+            'email.email' => 'Email không hợp lệ.',
+            'email.unique' => 'Email đã được sử dụng.',
+            'password.required' => 'Vui lòng nhập mật khẩu.',
+            'password.string' => 'Mật khẩu phải là một chuỗi ký tự.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
+            'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
+        ];
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
-        ]);
+        ], $messages);
 
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
@@ -52,10 +65,15 @@ class UserController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
+        $messages = [
+            'email.required' => 'Vui lòng nhập email.',
+            'email.email' => 'Email không hợp lệ.',
+            'password.required' => 'Vui lòng nhập mật khẩu.',
+        ];
         $validator = Validator::make($credentials, [
             'email' => 'required|email',
             'password' => 'required',
-        ]);
+        ], $messages);
         if ($validator->fails()) {
             return back()->withErrors($validator)->withInput();
         }
